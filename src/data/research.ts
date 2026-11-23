@@ -36,7 +36,6 @@ export const themes: Theme[] = [
       'Impact of a block structure on Lotka-Volterra systems',
       'Equilibrium and surviving species in a large Lotka-Volterra system of differential equations',
       'Equilibrium in a large Lotka-Volterra system with pairwise correlated interactions',
-      'Approximate message passing for block-structured ecological systems',
     ],
   },
   {
@@ -48,8 +47,6 @@ export const themes: Theme[] = [
     project: 'Université de Sherbrooke (2025), FRQNT postdoctoral fellowship, with Guillaume Blanchet and Dominique Gravel',
     glyph: 'patches',
     papers: [
-      'Island biogeography through the lens of multiscale metapopulation dynamics: insights into species-area relationships',
-      'Site fidelity and the persistence of migratory metapopulations',
       'Modeling metapopulations in dynamic landscapes: toward a unified concept of temporal metapopulation capacity',
       'Persistence of metapopulations in seasonally fluctuating landscapes',
     ],

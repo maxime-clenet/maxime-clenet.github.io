@@ -3,9 +3,9 @@ import Base from '../layouts/Base.astro';
 import Glyph from '../components/Glyph.astro';
 import PubItem from '../components/PubItem.astro';
 import { themes } from '../data/research';
-import { articles, conference, submitted, inPrep } from '../data/publications';
+import { articles, conference, inPrep } from '../data/publications';
 
-const all = [...articles, ...conference, ...submitted, ...inPrep];
+const all = [...articles, ...conference, ...inPrep];
 const find = (title: string) => all.find((p) => p.title === title);
 ---
 

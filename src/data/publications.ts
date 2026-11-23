@@ -18,14 +18,6 @@ export const students = ['S. Harimanana', 'R. Dubé'];
 
 export const articles: Pub[] = [
   {
-    authors: 'M.-A. Blais, G. Blanchet, M. Clenet, L. Boulerice, M. Laporte, O. Morisette, L. Chavarie',
-    title: 'From data to ecological insight: a comprehensive statistical toolkit for environmental DNA',
-    venue: 'Environmental DNA',
-    year: 2026,
-    note: 'in press',
-    short: 'eDNA',
-  },
-  {
     authors: 'M. Clenet, M. Dion, G. Blanchet',
     title: 'Addressing ecological challenges from a quantum computing perspective',
     venue: 'Methods in Ecology and Evolution',
@@ -94,24 +86,6 @@ export const conference: Pub[] = [
     venue: 'IEEE International Conference on Acoustics, Speech and Signal Processing',
     year: 2020,
     short: 'ICASSP',
-  },
-];
-
-export const submitted: Pub[] = [
-  {
-    authors: 'S. Harimanana, M. Clenet, D. Gravel',
-    title: 'Site fidelity and the persistence of migratory metapopulations',
-    venue: 'Submitted to Ecology Letters',
-  },
-  {
-    authors: 'M. Clenet*, F. Munoz*, C. Picard, A. Bernard, E. Pitard',
-    title: 'Island biogeography through the lens of multiscale metapopulation dynamics: insights into species-area relationships',
-    venue: 'Submitted to The American Naturalist',
-  },
-  {
-    authors: 'M. Clenet*, M.-Y. Gueddari*',
-    title: 'Approximate message passing for block-structured ecological systems',
-    venue: 'Submitted to Bulletin of Mathematical Biology',
   },
 ];
 

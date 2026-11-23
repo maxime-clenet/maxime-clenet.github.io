@@ -1,13 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import PubItem from '../components/PubItem.astro';
-import { articles, conference, submitted, inPrep } from '../data/publications';
+import { articles, conference, inPrep } from '../data/publications';
 import { links } from '../data/site';
 
 const groups = [
   { id: 'articles', label: 'Peer-reviewed articles', items: articles, year: true },
   { id: 'conference', label: 'Conference papers', items: conference, year: true },
-  { id: 'submitted', label: 'Submitted', items: submitted, year: false },
   { id: 'in-prep', label: 'In preparation', items: inPrep, year: false },
 ];
 const scholar = links.find((l) => l.label === 'Google Scholar')!;
