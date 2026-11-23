@@ -2,6 +2,7 @@
 import { url } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import Eigen from '../components/Eigen.astro';
+import Copula from '../components/Copula.astro';
 import Glyph from '../components/Glyph.astro';
 import PubItem from '../components/PubItem.astro';
 import { profile, links, statement, path, news } from '../data/site';
@@ -65,7 +66,32 @@ const fmt = (d: string) => {
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">02 — Research</p>
+        <p class="eyebrow">02 — Dependence</p>
+        <h2>Same margins, different dependence</h2>
+      </div>
+      <div class="dep">
+        <div class="prose">
+          <p>
+            A <em>copula</em> separates two things: how each variable behaves on its own (its margins) and how the
+            variables depend on each other. This makes it possible to model the dependence between, say, the
+            abundances of two species, without constraining their individual distributions.
+          </p>
+          <p>
+            Two dependence structures can share the same overall correlation and still behave very differently in the
+            extremes: whether rare events, such as two species both collapsing or both booming, tend to happen together.
+          </p>
+        </div>
+        <div class="dep-fig">
+          <Copula />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">03 — Research</p>
         <h2>Five questions I work on</h2>
       </div>
       <ul class="themes">
@@ -88,7 +114,7 @@ const fmt = (d: string) => {
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">03 — Selected work</p>
+        <p class="eyebrow">04 — Selected work</p>
         <h2>Selected publications</h2>
       </div>
       <ul class="publist">
@@ -101,7 +127,7 @@ const fmt = (d: string) => {
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">04 — News</p>
+        <p class="eyebrow">05 — News</p>
         <h2>Recently</h2>
       </div>
       <ul class="news">
@@ -229,6 +255,32 @@ const fmt = (d: string) => {
     .path {
       grid-column: 1;
       grid-row: auto;
+    }
+  }
+
+  .dep {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+
+  .dep .prose {
+    font-size: 1.075rem;
+  }
+
+  .dep .prose em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .dep-fig {
+    max-width: 30rem;
+  }
+
+  @media (max-width: 880px) {
+    .dep {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
