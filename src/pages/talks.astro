@@ -1,0 +1,152 @@
+---
+import Base from '../layouts/Base.astro';
+import talks from '../data/talks.json';
+
+const years = [...new Set(talks.map((t) => t.date.slice(0, 4)))];
+const counts = talks.reduce<Record<string, number>>((acc, t) => ((acc[t.type] = (acc[t.type] ?? 0) + 1), acc), {});
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const month = (d: string) => MONTHS[+d.slice(5, 7) - 1];
+---
+
+<Base title="Talks" description="Invited talks, conference presentations and seminars by Maxime Clenet.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Talks</p>
+    <h1>Talks &amp; seminars</h1>
+    <p class="lead prose">
+      {talks.length} presentations since 2021, including {counts.Invited} invited talks.
+    </p>
+    <ul class="kinds" aria-label="Types of talks">
+      {Object.entries(counts).map(([k, n]) => <li><span class={`dot k-${k}`}></span>{k} <span class="n">{n}</span></li>)}
+    </ul>
+  </header>
+
+  <div class="wrap">
+    {
+      years.map((y) => (
+        <section class="year">
+          <h2 class="y">{y}</h2>
+          <ul>
+            {talks
+              .filter((t) => t.date.startsWith(y))
+              .map((t) => (
+                <li>
+                  <span class="eyebrow m">{month(t.date)}</span>
+                  <span class="t">{t.title}</span>
+                  <span class={`kind k-${t.type}`}>{t.type}</span>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .kinds {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+
+  .kinds li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .n {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .k-Invited { color: var(--accent); }
+  .k-Conference { color: color-mix(in srgb, var(--accent) 60%, var(--ink)); }
+  .k-Seminar { color: var(--muted); }
+  .k-Poster { color: var(--rule-strong); }
+  .k-Outreach { color: color-mix(in srgb, var(--accent) 35%, var(--muted)); }
+
+  .kinds .dot.k-Invited { background: var(--accent); }
+
+  .year {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    gap: 0 3rem;
+    border-top: 1px solid var(--rule);
+    padding-block: 2rem;
+  }
+
+  .y {
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--ink-soft);
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .year li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  .year li:last-child {
+    border-bottom: 0;
+  }
+
+  .t {
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .kind {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 760px) {
+    .year {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .y {
+      position: static;
+      margin-bottom: 0.5rem;
+    }
+    .year li {
+      grid-template-columns: 3rem minmax(0, 1fr);
+    }
+    .kind {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+</style>

@@ -1,0 +1,147 @@
+---
+import Base from '../layouts/Base.astro';
+import { supervision, teaching } from '../data/teaching';
+---
+
+<Base title="Teaching" description="Teaching and student supervision by Maxime Clenet.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Teaching</p>
+    <h1>Teaching &amp; mentoring</h1>
+    <p class="lead prose">More than 200 hours of teaching in mathematics, computer science and ecology, and the co-supervision of students in Québec.</p>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Supervision</p>
+        <h2>Students</h2>
+      </div>
+      <ul class="cards">
+        {
+          supervision.map((s) => (
+            <li class="card">
+              <span class="eyebrow">{s.level} · {s.years}</span>
+              <span class="name">{s.name}</span>
+              <span class="topic">{s.topic}</span>
+              <span class="where">{s.where}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Courses</p>
+        <h2>Teaching</h2>
+      </div>
+      <div class="courses">
+        {
+          teaching.map((t) => (
+            <article class="course">
+              <header>
+                <span class="eyebrow">{t.years} · {t.hours}</span>
+                <h3>{t.place}</h3>
+                <p class="role">{t.role}</p>
+              </header>
+              <ul>
+                {t.items.map((i) => <li>{i}</li>)}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    display: grid;
+    gap: 0.45rem;
+    padding: 1.5rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--paper-raised);
+  }
+
+  .name {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    line-height: 1.15;
+  }
+
+  .topic {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--accent);
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+
+  .where {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .courses {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .course {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    gap: 1rem 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .course:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .course h3 {
+    font-size: 1.5rem;
+    margin: 0.4rem 0 0.2rem;
+  }
+
+  .role {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .course ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .course li {
+    padding: 0.65rem 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  .course li:last-child {
+    border-bottom: 0;
+  }
+
+  @media (max-width: 760px) {
+    .course {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

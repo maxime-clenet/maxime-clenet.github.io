@@ -1,0 +1,228 @@
+---
+import '@fontsource-variable/newsreader';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { profile, links } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = 'Maxime Clenet, theoretical ecologist. Mathematical models of biodiversity, species interactions and ecosystem functioning.' } = Astro.props;
+const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const nav = [
+  { href: '/research', label: 'Research' },
+  { href: '/publications', label: 'Publications' },
+  { href: '/talks', label: 'Talks' },
+  { href: '/teaching', label: 'Teaching' },
+  { href: '/cv', label: 'CV' },
+];
+const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="brand" href="/" aria-label="Home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">{profile.name}</span>
+        </a>
+        <nav aria-label="Main">
+          <ul>
+            {
+              nav.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap foot">
+        <div class="foot-id">
+          <p class="foot-name">{profile.name}</p>
+          <p class="foot-meta">{profile.position} · {profile.affiliation}</p>
+          <address>{profile.address.join(' · ')}</address>
+        </div>
+        <ul class="foot-links">
+          {links.map((l) => <li><a href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">{l.label}</a></li>)}
+        </ul>
+        <p class="foot-small eyebrow">Last updated {updated}</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -999px;
+    top: 0.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    z-index: 100;
+  }
+  .skip:focus {
+    left: 0.5rem;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+  }
+
+  .brand-mark {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    background: radial-gradient(circle at 50% 50%, var(--accent) 0 28%, transparent 30%);
+  }
+
+  .brand-name {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  nav ul {
+    display: flex;
+    gap: clamp(0.9rem, 2.2vw, 2rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: var(--ink-soft);
+    padding-block: 0.4rem;
+    border-bottom: 1px solid transparent;
+  }
+
+  nav a:hover {
+    color: var(--ink);
+  }
+
+  nav a[aria-current='page'] {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      padding-block: 0.75rem;
+    }
+    nav ul {
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--rule);
+    margin-top: clamp(3rem, 6vw, 5rem);
+    padding-block: 3rem 2.5rem;
+    background: var(--paper-raised);
+  }
+
+  .foot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem 3rem;
+    align-items: start;
+  }
+
+  .foot-name {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    margin: 0 0 0.25rem;
+  }
+
+  .foot-meta,
+  address {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-style: normal;
+    margin: 0;
+  }
+
+  .foot-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+    text-align: right;
+    font-size: 0.95rem;
+  }
+
+  .foot-small {
+    grid-column: 1 / -1;
+    margin: 1rem 0 0;
+  }
+
+  @media (max-width: 640px) {
+    .foot {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .foot-links {
+      text-align: left;
+    }
+  }
+</style>

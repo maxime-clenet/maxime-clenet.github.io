@@ -1,0 +1,94 @@
+---
+// One publication entry: highlights "M. Clenet", underlines co-supervised students.
+import { students, type Pub } from '../data/publications';
+
+interface Props {
+  pub: Pub;
+  showYear?: boolean;
+}
+const { pub, showYear = false } = Astro.props;
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+let authors = esc(pub.authors).replace(/M\. Clenet(\*?)/g, '<strong class="me">M. Clenet$1</strong>');
+for (const s of students) authors = authors.replaceAll(s, `<span class="stu">${s}</span>`);
+
+const href = pub.doi ? `https://doi.org/${pub.doi}` : pub.url;
+---
+
+<li class="pub">
+  {showYear && <span class="year eyebrow">{pub.year ?? '—'}</span>}
+  <div class="body">
+    <p class="title">
+      {href ? <a href={href} target="_blank" rel="noopener">{pub.title}</a> : pub.title}
+    </p>
+    <p class="authors" set:html={authors} />
+    <p class="venue">
+      <span><em>{pub.venue}</em>{pub.year && !showYear ? ` (${pub.year})` : ''}{pub.note ? `, ${pub.note}` : ''}</span>
+      {pub.short && <span class="tag">{pub.short}</span>}
+    </p>
+  </div>
+</li>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem 2rem;
+    padding: 1.15rem 0;
+    border-bottom: 1px solid var(--rule);
+    list-style: none;
+  }
+
+  .pub:has(.year) {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+  }
+
+  .year {
+    padding-top: 0.35rem;
+  }
+
+  .title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.32;
+    margin: 0 0 0.35rem;
+    font-weight: 450;
+  }
+
+  .title a {
+    text-decoration-color: var(--rule-strong);
+  }
+
+  .authors {
+    font-size: 0.925rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.2rem;
+  }
+
+  .authors :global(.me) {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .authors :global(.stu) {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.2em;
+  }
+
+  .venue {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.6rem;
+  }
+
+  @media (max-width: 560px) {
+    .pub:has(.year) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,162 @@
+---
+// Small line illustrations for each research theme (decorative).
+import data from '../data/eigenvalues.json';
+
+interface Props {
+  kind: 'contribution' | 'disk' | 'patches' | 'temporal' | 'qubits';
+}
+const { kind } = Astro.props;
+
+// contribution: a few species carry most of the function (geometric decay)
+const bars = Array.from({ length: 14 }, (_, i) => 62 * Math.pow(0.72, i) + 3);
+
+// disk: a sample of the elliptic-law eigenvalues
+const sample = data.elliptic.filter((_, i) => i % 3 === 0).map(([x, y]) => [80 + x * 40, 45 - y * 40]);
+
+// patches: habitat patches connected by dispersal
+const patches = [
+  [28, 30, 9], [62, 18, 6], [96, 34, 11], [46, 62, 7], [84, 66, 5], [128, 56, 8], [138, 22, 5],
+];
+const links = [[0, 1], [1, 2], [0, 3], [3, 4], [2, 4], [2, 5], [5, 6], [2, 6]];
+
+// temporal: the same nodes, different interactions at three times
+const tn = [[10, 14], [30, 8], [26, 30], [8, 34]];
+const te = [
+  [[0, 1], [1, 2], [2, 3]],
+  [[0, 2], [1, 3], [0, 1]],
+  [[2, 3], [0, 3], [1, 2], [0, 2]],
+];
+
+// qubits: a network split into two detected communities
+const qa = [[28, 26], [44, 14], [52, 38], [30, 54], [16, 40]];
+const qb = [[110, 22], [130, 34], [118, 56], [100, 46], [140, 60]];
+const qe = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [0, 2]];
+---
+
+<svg class="glyph" viewBox="0 0 160 90" aria-hidden="true" focusable="false">
+  {
+    kind === 'contribution' && (
+      <g>
+        <line class="base" x1="6" y1="80" x2="154" y2="80" />
+        {bars.map((h, i) => (
+          <rect class={i < 3 ? 'fill' : 'soft'} x={10 + i * 10.4} y={80 - h} width="6.5" height={h} rx="1.5" />
+        ))}
+      </g>
+    )
+  }
+  {
+    kind === 'disk' && (
+      <g>
+        <line class="base" x1="10" y1="45" x2="150" y2="45" />
+        <line class="base" x1="80" y1="8" x2="80" y2="82" />
+        <ellipse class="ring" cx="80" cy="45" rx="60" ry="20" />
+        {sample.map(([x, y]) => (
+          <circle class="dot" cx={x.toFixed(1)} cy={y.toFixed(1)} r="1.1" />
+        ))}
+      </g>
+    )
+  }
+  {
+    kind === 'patches' && (
+      <g>
+        {links.map(([a, b]) => (
+          <line class="edge" x1={patches[a][0]} y1={patches[a][1]} x2={patches[b][0]} y2={patches[b][1]} />
+        ))}
+        {patches.map(([x, y, r], i) => (
+          <circle class={i % 3 === 1 ? 'hollow' : 'node'} cx={x} cy={y} r={r} />
+        ))}
+      </g>
+    )
+  }
+  {
+    kind === 'temporal' && (
+      <g>
+        {te.map((edges, k) => (
+          <g transform={`translate(${12 + k * 50} 18)`}>
+            <rect class="frame" x="-4" y="-6" width="46" height="50" rx="6" />
+            {edges.map(([a, b]) => (
+              <line class="edge strong" x1={tn[a][0]} y1={tn[a][1]} x2={tn[b][0]} y2={tn[b][1]} />
+            ))}
+            {tn.map(([x, y]) => (
+              <circle class="node" cx={x} cy={y} r="3.2" />
+            ))}
+          </g>
+        ))}
+        <line class="base" x1="12" y1="82" x2="150" y2="82" />
+        <path class="base" d="M146 79 L150 82 L146 85" fill="none" />
+      </g>
+    )
+  }
+  {
+    kind === 'qubits' && (
+      <g>
+        <line class="edge dashed" x1={qa[2][0]} y1={qa[2][1]} x2={qb[3][0]} y2={qb[3][1]} />
+        {qe.map(([a, b]) => (
+          <line class="edge strong" x1={qa[a][0]} y1={qa[a][1]} x2={qa[b][0]} y2={qa[b][1]} />
+        ))}
+        {qe.map(([a, b]) => (
+          <line class="edge" x1={qb[a][0]} y1={qb[a][1]} x2={qb[b][0]} y2={qb[b][1]} />
+        ))}
+        {qa.map(([x, y]) => (
+          <circle class="node" cx={x} cy={y} r="4" />
+        ))}
+        {qb.map(([x, y]) => (
+          <circle class="hollow" cx={x} cy={y} r="4" />
+        ))}
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .glyph {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .base {
+    stroke: var(--rule-strong);
+    stroke-width: 1;
+  }
+  .fill {
+    fill: var(--accent);
+  }
+  .soft {
+    fill: var(--accent);
+    opacity: 0.28;
+  }
+  .ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 0.8;
+    stroke-dasharray: 2 2.5;
+    opacity: 0.6;
+  }
+  .dot {
+    fill: var(--accent);
+    opacity: 0.85;
+  }
+  .edge {
+    stroke: var(--rule-strong);
+    stroke-width: 1.1;
+  }
+  .edge.strong {
+    stroke: var(--accent);
+    opacity: 0.7;
+  }
+  .edge.dashed {
+    stroke-dasharray: 3 3;
+  }
+  .node {
+    fill: var(--accent);
+  }
+  .hollow {
+    fill: var(--paper);
+    stroke: var(--accent);
+    stroke-width: 1.3;
+  }
+  .frame {
+    fill: none;
+    stroke: var(--rule);
+  }
+</style>

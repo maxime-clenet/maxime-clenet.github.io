@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import { path } from '../data/site';
+---
+
+<Base title="CV" description="Curriculum vitae of Maxime Clenet.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Curriculum vitae</p>
+    <h1>CV</h1>
+    <p class="lead prose">The full CV, with publications, talks, funding, teaching and service.</p>
+    <ul class="pills">
+      <li><a class="pill solid" href="/Clenet_CV.pdf" target="_blank" rel="noopener">Download PDF</a></li>
+    </ul>
+  </header>
+
+  <div class="wrap">
+    <ol class="timeline">
+      {
+        path.map((p) => (
+          <li>
+            <span class="eyebrow">{p.years}</span>
+            <span class="place">{p.place}</span>
+            <span class="what">{p.what}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="frame">
+      <object data="/Clenet_CV.pdf" type="application/pdf" title="CV of Maxime Clenet">
+        <p>Your browser cannot display the PDF. <a href="/Clenet_CV.pdf">Download it here</a>.</p>
+      </object>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 1rem;
+  }
+
+  .timeline li {
+    display: grid;
+    gap: 0.3rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--accent);
+  }
+
+  .place {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .what {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .frame {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--paper-raised);
+  }
+
+  object {
+    display: block;
+    width: 100%;
+    height: min(90vh, 1100px);
+  }
+
+  .frame p {
+    padding: 2rem;
+  }
+</style>

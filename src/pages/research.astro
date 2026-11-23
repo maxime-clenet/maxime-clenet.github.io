@@ -1,0 +1,162 @@
+---
+import Base from '../layouts/Base.astro';
+import Glyph from '../components/Glyph.astro';
+import PubItem from '../components/PubItem.astro';
+import { themes } from '../data/research';
+import { articles, conference, submitted, inPrep } from '../data/publications';
+
+const all = [...articles, ...conference, ...submitted, ...inPrep];
+const find = (title: string) => all.find((p) => p.title === title);
+---
+
+<Base title="Research" description="Research themes of Maxime Clenet: coexistence in large communities, metapopulations, temporal networks, functional ecology and quantum computing for ecology.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Research</p>
+    <h1>Five questions</h1>
+    <p class="lead prose">
+      A common aim runs through my work: linking the diversity of species, their interactions and their habitats to
+      the emergent properties of communities and ecosystems.
+    </p>
+    <nav class="toc" aria-label="Research themes">
+      {themes.map((t, i) => <a href={`#${t.id}`}><span class="eyebrow">{String(i + 1).padStart(2, '0')}</span>{t.title}</a>)}
+    </nav>
+  </header>
+
+  {
+    themes.map((t, i) => (
+      <section class="section" id={t.id}>
+        <div class="wrap theme">
+          <aside class="side">
+            <p class="eyebrow">
+              {String(i + 1).padStart(2, '0')} · {t.field}
+            </p>
+            <div class="glyph-box">
+              <Glyph kind={t.glyph} />
+            </div>
+          </aside>
+          <div class="main">
+            <h2>{t.title}</h2>
+            <p class="question">{t.question}</p>
+            <p class="text">{t.text}</p>
+            {t.project && <p class="project"><span class="eyebrow">Project</span> {t.project}</p>}
+            <h3 class="eyebrow related">Related work</h3>
+            <ul class="publist">
+              {t.papers.map((title) => {
+                const p = find(title);
+                return p ? <PubItem pub={p} /> : null;
+              })}
+            </ul>
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .toc a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    padding: 0.5rem 0.95rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .toc a:hover {
+    border-color: var(--accent);
+    background: var(--accent-wash);
+  }
+
+  .toc .eyebrow {
+    font-size: 0.68rem;
+  }
+
+  .theme {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    gap: 3rem;
+    scroll-margin-top: 5rem;
+  }
+
+  section {
+    scroll-margin-top: 4rem;
+  }
+
+  .side {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+  }
+
+  .glyph-box {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--paper-raised);
+  }
+
+  .main {
+    max-width: 44rem;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 1.5rem + 1.8vw, 2.9rem);
+    margin-bottom: 1rem;
+  }
+
+  .question {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.4;
+    color: var(--accent);
+  }
+
+  .project {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    padding: 0.9rem 1.1rem;
+    border-left: 2px solid var(--accent);
+    background: var(--accent-wash);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .project .eyebrow {
+    margin-right: 0.5rem;
+    color: var(--accent-ink);
+  }
+
+  .related {
+    margin: 2.25rem 0 0.25rem;
+    font-weight: 450;
+  }
+
+  .publist {
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 760px) {
+    .theme {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+    .side {
+      position: static;
+    }
+    .glyph-box {
+      max-width: 16rem;
+    }
+  }
+</style>

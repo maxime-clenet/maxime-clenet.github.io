@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import PubItem from '../components/PubItem.astro';
+import { articles, conference, submitted, inPrep } from '../data/publications';
+import { links } from '../data/site';
+
+const groups = [
+  { id: 'articles', label: 'Peer-reviewed articles', items: articles, year: true },
+  { id: 'conference', label: 'Conference papers', items: conference, year: true },
+  { id: 'submitted', label: 'Submitted', items: submitted, year: false },
+  { id: 'in-prep', label: 'In preparation', items: inPrep, year: false },
+];
+const scholar = links.find((l) => l.label === 'Google Scholar')!;
+const orcid = links.find((l) => l.label === 'ORCID')!;
+---
+
+<Base title="Publications" description="Publications of Maxime Clenet.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Publications</p>
+    <h1>Papers</h1>
+    <p class="lead prose">
+      {articles.length} peer-reviewed articles, {conference.length} conference papers and work in progress. Also on{' '}
+      <a href={scholar.href} target="_blank" rel="noopener">Google Scholar</a>{' '}and{' '}
+      <a href={orcid.href} target="_blank" rel="noopener">ORCID</a>.
+    </p>
+    <p class="legend">
+      <span><strong>M. Clenet</strong> me</span>
+      <span><span class="stu">underlined</span> co-supervised student</span>
+      <span>* equal contribution</span>
+    </p>
+  </header>
+
+  {
+    groups.map((g) => (
+      <section class="section" id={g.id}>
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">{String(g.items.length).padStart(2, '0')} items</p>
+            <h2>{g.label}</h2>
+          </div>
+          <ul class="publist">
+            {g.items.map((p) => <PubItem pub={p} showYear={g.year} />)}
+          </ul>
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 1.5rem;
+  }
+
+  .legend strong {
+    color: var(--ink);
+    font-weight: 600;
+    margin-right: 0.3rem;
+  }
+
+  .stu {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.2em;
+    margin-right: 0.3rem;
+    color: var(--ink);
+  }
+
+  .publist {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+</style>
