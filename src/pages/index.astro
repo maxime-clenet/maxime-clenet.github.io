@@ -1,4 +1,5 @@
 ---
+import { url } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import Eigen from '../components/Eigen.astro';
 import Glyph from '../components/Glyph.astro';
@@ -25,8 +26,8 @@ const fmt = (d: string) => {
         communities and ecosystems, using the tools of probability and <em>random matrix theory</em>.
       </p>
       <ul class="pills rise d3">
-        <li><a class="pill solid" href="/research">Research</a></li>
-        <li><a class="pill" href="/cv">CV</a></li>
+        <li><a class="pill solid" href={url('/research')}>Research</a></li>
+        <li><a class="pill" href={url('/cv')}>CV</a></li>
         {links.map((l) => <li><a class="pill" href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">{l.label}</a></li>)}
       </ul>
     </div>
@@ -71,7 +72,7 @@ const fmt = (d: string) => {
         {
           themes.map((t, i) => (
             <li>
-              <a class="theme" href={`/research#${t.id}`}>
+              <a class="theme" href={url(`/research#${t.id}`)}>
                 <Glyph kind={t.glyph} />
                 <span class="eyebrow">{String(i + 1).padStart(2, '0')} · {t.field}</span>
                 <span class="theme-title">{t.title}</span>
@@ -93,7 +94,7 @@ const fmt = (d: string) => {
       <ul class="publist">
         {selected.map((p) => <PubItem pub={p} showYear />)}
       </ul>
-      <p class="more"><a href="/publications">All publications →</a></p>
+      <p class="more"><a href={url('/publications')}>All publications →</a></p>
     </div>
   </section>
 

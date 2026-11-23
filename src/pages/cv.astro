@@ -1,4 +1,5 @@
 ---
+import { url } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import { path } from '../data/site';
 ---
@@ -9,7 +10,7 @@ import { path } from '../data/site';
     <h1>CV</h1>
     <p class="lead prose">The full CV, with publications, talks, funding, teaching and service.</p>
     <ul class="pills">
-      <li><a class="pill solid" href="/Clenet_CV.pdf" target="_blank" rel="noopener">Download PDF</a></li>
+      <li><a class="pill solid" href={url('/Clenet_CV.pdf')} target="_blank" rel="noopener">Download PDF</a></li>
     </ul>
   </header>
 
@@ -26,8 +27,8 @@ import { path } from '../data/site';
       }
     </ol>
     <div class="frame">
-      <object data="/Clenet_CV.pdf" type="application/pdf" title="CV of Maxime Clenet">
-        <p>Your browser cannot display the PDF. <a href="/Clenet_CV.pdf">Download it here</a>.</p>
+      <object data={url('/Clenet_CV.pdf')} type="application/pdf" title="CV of Maxime Clenet">
+        <p>Your browser cannot display the PDF. <a href={url('/Clenet_CV.pdf')}>Download it here</a>.</p>
       </object>
     </div>
   </div>
