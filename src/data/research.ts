@@ -20,7 +20,7 @@ export const themes: Theme[] = [
     text: 'In most ecosystems, a few species seem to contribute disproportionately to how the ecosystem works. My current project aims to disentangle the contributions of individual species to ecosystem functions and to understand the mechanisms behind these unequal contributions.',
     project: 'CEFE, CNRS & Université de Montpellier (2025 –), with Lucie Mahaut and Cyrille Violle',
     glyph: 'contribution',
-    papers: ['The partitioning of ecosystem functions across species'],
+    papers: [],
   },
   {
     id: 'large-communities',
@@ -46,10 +46,7 @@ export const themes: Theme[] = [
     text: 'Species persist across networks of habitat patches, but these habitats change: with the seasons, with disturbances, along migration routes. I develop metapopulation models that integrate the temporal dimension of habitats, and connect metapopulation dynamics to island biogeography.',
     project: 'Université de Sherbrooke (2025), FRQNT postdoctoral fellowship, with Guillaume Blanchet and Dominique Gravel',
     glyph: 'patches',
-    papers: [
-      'Modeling metapopulations in dynamic landscapes: toward a unified concept of temporal metapopulation capacity',
-      'Persistence of metapopulations in seasonally fluctuating landscapes',
-    ],
+    papers: [],
   },
   {
     id: 'temporal-networks',
@@ -58,7 +55,7 @@ export const themes: Theme[] = [
     question: 'What do we learn by treating ecological interactions as networks that change over time?',
     text: 'Interactions between species appear, disappear and change in strength. I study how time-varying interaction networks shape community dynamics and stability, and I co-organize a workshop on this topic in Namur in 2027, funded by naXys (University of Namur).',
     glyph: 'temporal',
-    papers: ['How graph cycles shape ecosystem stability'],
+    papers: [],
   },
   {
     id: 'quantum-ecology',
@@ -70,8 +67,6 @@ export const themes: Theme[] = [
     glyph: 'qubits',
     papers: [
       'Addressing ecological challenges from a quantum computing perspective',
-      'Optimization as a bridge between ecology and quantum computing',
-      'Efficient spatial planning for forest restoration via optimization algorithms: a proof of concept for potential quantum computing applications',
     ],
   },
 ];

@@ -1,13 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import PubItem from '../components/PubItem.astro';
-import { articles, conference, inPrep } from '../data/publications';
+import { articles, conference } from '../data/publications';
 import { links } from '../data/site';
 
 const groups = [
   { id: 'articles', label: 'Peer-reviewed articles', items: articles, year: true },
   { id: 'conference', label: 'Conference papers', items: conference, year: true },
-  { id: 'in-prep', label: 'In preparation', items: inPrep, year: false },
 ];
 const scholar = links.find((l) => l.label === 'Google Scholar')!;
 const orcid = links.find((l) => l.label === 'ORCID')!;
@@ -18,7 +17,7 @@ const orcid = links.find((l) => l.label === 'ORCID')!;
     <p class="eyebrow">Publications</p>
     <h1>Papers</h1>
     <p class="lead prose">
-      {articles.length} peer-reviewed articles, {conference.length} conference papers and work in progress. Also on{' '}
+      {articles.length} peer-reviewed articles, {conference.length} conference papers. Also on{' '}
       <a href={scholar.href} target="_blank" rel="noopener">Google Scholar</a>{' '}and{' '}
       <a href={orcid.href} target="_blank" rel="noopener">ORCID</a>.
     </p>

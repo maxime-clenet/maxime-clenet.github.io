@@ -88,36 +88,3 @@ export const conference: Pub[] = [
     short: 'ICASSP',
   },
 ];
-
-export const inPrep: Pub[] = [
-  {
-    authors: 'M. Clenet, L. Mahaut, A. Celle, B. McGill, D. Mouillot, B. Enquist, N. Mouquet, C. Violle',
-    title: 'The partitioning of ecosystem functions across species',
-    venue: 'In preparation',
-  },
-  {
-    authors: 'M. Clenet, S. Harimanana, G. Blanchet, D. Gravel',
-    title: 'Modeling metapopulations in dynamic landscapes: toward a unified concept of temporal metapopulation capacity',
-    venue: 'In preparation',
-  },
-  {
-    authors: 'F. Thibault, M. Clenet, D. Gravel, A. Allard',
-    title: 'How graph cycles shape ecosystem stability',
-    venue: 'In preparation',
-  },
-  {
-    authors: 'R. Dubé, M. Dion, G. Blanchet, J. Vivian, M. Clenet',
-    title: 'Optimization as a bridge between ecology and quantum computing',
-    venue: 'In preparation',
-  },
-  {
-    authors: 'J. Vivian, M. Clenet, M. Dion, G. Blanchet',
-    title: 'Efficient spatial planning for forest restoration via optimization algorithms: a proof of concept for potential quantum computing applications',
-    venue: 'In preparation',
-  },
-  {
-    authors: 'M. Clenet, G. Blanchet, D. Gravel',
-    title: 'Persistence of metapopulations in seasonally fluctuating landscapes',
-    venue: 'In preparation',
-  },
-];

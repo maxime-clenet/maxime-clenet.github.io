@@ -3,9 +3,9 @@ import Base from '../layouts/Base.astro';
 import Glyph from '../components/Glyph.astro';
 import PubItem from '../components/PubItem.astro';
 import { themes } from '../data/research';
-import { articles, conference, inPrep } from '../data/publications';
+import { articles, conference } from '../data/publications';
 
-const all = [...articles, ...conference, ...inPrep];
+const all = [...articles, ...conference];
 const find = (title: string) => all.find((p) => p.title === title);
 ---
 
@@ -39,13 +39,17 @@ const find = (title: string) => all.find((p) => p.title === title);
             <p class="question">{t.question}</p>
             <p class="text">{t.text}</p>
             {t.project && <p class="project"><span class="eyebrow">Project</span> {t.project}</p>}
-            <h3 class="eyebrow related">Related work</h3>
-            <ul class="publist">
-              {t.papers.map((title) => {
-                const p = find(title);
-                return p ? <PubItem pub={p} /> : null;
-              })}
-            </ul>
+            {t.papers.some((title) => find(title)) && (
+              <>
+                <h3 class="eyebrow related">Related work</h3>
+                <ul class="publist">
+                  {t.papers.map((title) => {
+                    const p = find(title);
+                    return p ? <PubItem pub={p} /> : null;
+                  })}
+                </ul>
+              </>
+            )}
           </div>
         </div>
       </section>
