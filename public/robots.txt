@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maxime-clenet.github.io/sitemap-index.xml

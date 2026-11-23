@@ -39,6 +39,7 @@ const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'n
     <meta property="og:type" content="website" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
