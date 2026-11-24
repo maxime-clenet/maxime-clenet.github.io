@@ -31,6 +31,7 @@ const fmt = (d: Date) => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUT
           <ul>
             {efforts
               .filter((e) => e.year === y)
+              .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
               .map((e) => (
                 <li>
                   <span class="eyebrow m">{month(e.date)}</span>

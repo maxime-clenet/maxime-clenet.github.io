@@ -36,6 +36,7 @@ export const efforts: Effort[] = [
   {
     year: 2026,
     sport: 'bike',
+    date: '2026-08',
     title: 'Montpellier – Mont Aigoual and back',
     place: 'Hérault & Gard, France',
     stats: ['219 km', '2,594 m D+', '7 h 27 min'],
