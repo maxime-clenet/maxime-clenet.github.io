@@ -9,7 +9,6 @@ export const profile = {
   city: 'Montpellier, France',
   address: ['CEFE – Campus du CNRS', '1919 route de Mende', '34000 Montpellier, France'],
   email: 'maxime.clenet@cefe.cnrs.fr',
-  editor: 'Associate Editor, Methods in Ecology and Evolution',
 };
 
 export const links = [
@@ -40,24 +39,5 @@ export const path = [
     years: '2019 – 2022',
     place: 'Université Gustave Eiffel',
     what: 'Ph.D. in mathematics, with François Massol and Jamal Najim',
-  },
-];
-
-export const news = [
-  {
-    date: '2026-12',
-    text: 'Invited talk at The Three Ecologies of Quantum Technology (Trinity College Dublin, online), and a presentation at the British Ecological Society Annual Meeting.',
-  },
-  {
-    date: '2026-11',
-    text: 'Our workshop “Time-varying interaction networks as an emerging tool for community dynamics” is funded by naXys (University of Namur). See you in Namur in 2027.',
-  },
-  {
-    date: '2026',
-    text: 'I joined the editorial board of Methods in Ecology and Evolution as Associate Editor.',
-  },
-  {
-    date: '2025-12',
-    text: 'I joined the CEFE in Montpellier to work on why a few species drive most ecosystem functions.',
   },
 ];
