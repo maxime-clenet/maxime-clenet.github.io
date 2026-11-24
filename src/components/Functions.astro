@@ -1,0 +1,366 @@
+---
+// Figure: contributions of 30 species to four ecosystem functions (illustrative, simulated).
+// Each bar is a species; bars are ranked by their share of the selected function.
+// Clicking a function re-ranks the same species, so one can follow how the few species
+// that dominate one function are not necessarily those that dominate another.
+// Data are simulated at build time with a seeded generator: a species' share of function f
+// is proportional to exp(sigma * z), where z mixes a species effect shared by all functions
+// with a function-specific effect.
+
+const N = 30;
+const SIGMA = 1.35;
+const SHARED = 0.35; // weight of the species effect shared across functions
+
+let seed = 9;
+const rand = () => {
+  seed = (seed + 0x6d2b79f5) | 0;
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+};
+const gauss = () => Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+
+const fns = [
+  { id: 'abundance', label: 'Abundance' },
+  { id: 'flux', label: 'Flux' },
+  { id: 'biomass', label: 'Biomass' },
+  { id: 'pollination', label: 'Pollination' },
+];
+
+const common = Array.from({ length: N }, gauss);
+const shares = fns.map(() => {
+  const raw = common.map((c) => Math.exp(SIGMA * (Math.sqrt(SHARED) * c + Math.sqrt(1 - SHARED) * gauss())));
+  const tot = raw.reduce((a, b) => a + b, 0);
+  return raw.map((r) => r / tot);
+});
+
+// Rank of each species in each function, and how many top species make up half of it.
+const ranks = shares.map((s) => {
+  const order = s.map((v, i) => i).sort((a, b) => s[b] - s[a]);
+  const r = new Array(N);
+  order.forEach((sp, k) => (r[sp] = k));
+  return r;
+});
+const half = shares.map((s) => {
+  const sorted = [...s].sort((a, b) => b - a);
+  let acc = 0;
+  for (let k = 0; k < N; k++) {
+    acc += sorted[k];
+    if (acc >= 0.5) return k + 1;
+  }
+  return N;
+});
+
+// Three tracked species: the top contributor to abundance, then the top contributors to
+// pollination and flux among the remaining species.
+const tracked: number[] = [];
+for (const f of [0, 3, 1]) {
+  const best = ranks[f].map((r, i) => [r, i]).filter(([, i]) => !tracked.includes(i)).sort((a, b) => a[0] - b[0])[0][1];
+  tracked.push(best);
+}
+const names = ['A', 'B', 'C'];
+
+const W = 280;
+const H = 140;
+const slot = W / N;
+const bw = slot * 0.72;
+const maxShare = Math.max(...shares.flat());
+const f1 = (x: number) => +x.toFixed(2);
+
+const bars = Array.from({ length: N }, (_, i) => ({
+  t: tracked.indexOf(i),
+  vars: fns
+    .map((_, f) => `--x${f}:${f1(ranks[f][i] * slot + (slot - bw) / 2)}px;--h${f}:${f1(shares[f][i] / maxShare)}`)
+    .join(';'),
+  d: Math.round((i * 37) % 300),
+}));
+const halfVars = fns.map((_, f) => `--k${f}:${f1(half[f] * slot)}px;--n${f}:${f1(half[f] * slot)}`).join(';');
+---
+
+<figure class="fns" data-mode="0" style={halfVars}>
+  <div class="toggle" role="group" aria-label="Ecosystem function">
+    {
+      fns.map((fn, f) => (
+        <button type="button" data-mode={f} aria-pressed={String(f === 0)}>
+          {fn.label}
+        </button>
+      ))
+    }
+  </div>
+  <svg viewBox={`-6 -14 ${W + 12} ${H + 34}`} role="img" aria-labelledby="fn-title fn-desc">
+    <title id="fn-title">Contributions of species to ecosystem functions</title>
+    <desc id="fn-desc">
+      Thirty species ranked by their share of an ecosystem function. A few species provide most of each function, but
+      the dominant species change from one function to another: abundance, flux, biomass and pollination.
+    </desc>
+    <line class="base" x1="0" y1={H} x2={W} y2={H}></line>
+    <g class="half">
+      <rect class="half-zone" x="0" y="0" width="1" height={H}></rect>
+      <line class="half-line" x1="0" y1="-6" x2="0" y2={H}></line>
+    </g>
+    {
+      bars.map((b) => (
+        <g class:list={['bar', b.t >= 0 && `sp sp${b.t}`]} style={`${b.vars};--d:${b.d}ms`}>
+          <rect x="0" y="0" width={f1(bw)} height={H}></rect>
+          {b.t >= 0 && (
+            <text class="tag" x={f1(bw / 2)} y={H + 10} text-anchor="middle">
+              {names[b.t]}
+            </text>
+          )}
+        </g>
+      ))
+    }
+    <text class="lbl" x="0" y={H + 22}>
+      Species, ranked by contribution →
+    </text>
+  </svg>
+  <figcaption>
+    <p class="note" aria-live="polite">
+      {
+        fns.map((fn, f) => (
+          <span data-note={f}>
+            <strong>{half[f]}</strong> of {N} species provide half of {fn.label.toLowerCase()}.
+          </span>
+        ))
+      }
+    </p>
+    <p>
+      <span class="eyebrow">Fig.</span> Share of four ecosystem functions provided by each of {N} species (simulated
+      data). Each function is dominated by a few species, but not always the same ones: follow species{' '}
+      <span class="key k0">A</span>, <span class="key k1">B</span> and <span class="key k2">C</span>.
+    </p>
+  </figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('figure.fns').forEach((fig) => {
+    const buttons = fig.querySelectorAll<HTMLButtonElement>('button[data-mode]');
+    buttons.forEach((b) =>
+      b.addEventListener('click', () => {
+        fig.dataset.mode = b.dataset.mode;
+        buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      }),
+    );
+  });
+</script>
+
+<style>
+  .fns {
+    margin: 2rem 0 0;
+    padding: 1.25rem 1.25rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--paper-raised);
+
+    --c0: #2f5d46;
+    --c1: #b07a24;
+    --c2: #3f6a94;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .fns {
+      --c0: #8fbf9f;
+      --c1: #e0b064;
+      --c2: #8fb3d9;
+    }
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    overflow: visible;
+  }
+
+  .base {
+    stroke: var(--rule-strong);
+    stroke-width: 0.6;
+  }
+
+  .bar {
+    --x: var(--x0);
+    --h: var(--h0);
+    transform: translateX(var(--x));
+    transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+    transition-delay: var(--d);
+  }
+
+  .bar rect {
+    fill: var(--rule-strong);
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scaleY(var(--h));
+    transition:
+      transform 1s cubic-bezier(0.65, 0, 0.35, 1),
+      fill 0.2s ease;
+    transition-delay: var(--d);
+  }
+
+  .bar:hover rect {
+    fill: var(--muted);
+  }
+
+  .sp0 rect {
+    fill: var(--c0);
+  }
+  .sp1 rect {
+    fill: var(--c1);
+  }
+  .sp2 rect {
+    fill: var(--c2);
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 7px;
+    font-weight: 600;
+  }
+  .sp0 .tag {
+    fill: var(--c0);
+  }
+  .sp1 .tag {
+    fill: var(--c1);
+  }
+  .sp2 .tag {
+    fill: var(--c2);
+  }
+
+  .fns[data-mode='1'] .bar {
+    --x: var(--x1);
+    --h: var(--h1);
+  }
+  .fns[data-mode='2'] .bar {
+    --x: var(--x2);
+    --h: var(--h2);
+  }
+  .fns[data-mode='3'] .bar {
+    --x: var(--x3);
+    --h: var(--h3);
+  }
+
+  .half {
+    --k: var(--k0);
+    --n: var(--n0);
+  }
+  .fns[data-mode='1'] .half {
+    --k: var(--k1);
+    --n: var(--n1);
+  }
+  .fns[data-mode='2'] .half {
+    --k: var(--k2);
+    --n: var(--n2);
+  }
+  .fns[data-mode='3'] .half {
+    --k: var(--k3);
+    --n: var(--n3);
+  }
+
+  .half-zone {
+    fill: var(--accent-wash);
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transform: scaleX(var(--n));
+    transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1) 0.3s;
+  }
+
+  .half-line {
+    stroke: var(--accent);
+    stroke-width: 0.6;
+    stroke-dasharray: 2 2.5;
+    transform: translateX(var(--k));
+    transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1) 0.3s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar,
+    .bar rect,
+    .half-zone,
+    .half-line {
+      transition: none;
+    }
+  }
+
+  .lbl {
+    font-family: var(--mono);
+    font-size: 6.5px;
+    fill: var(--muted);
+  }
+
+  figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  figcaption p {
+    margin: 0.6rem 0 0;
+  }
+
+  figcaption .eyebrow {
+    color: var(--accent);
+    margin-right: 0.4rem;
+  }
+
+  .note {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+
+  .note strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .note span {
+    display: none;
+  }
+
+  .fns[data-mode='0'] [data-note='0'],
+  .fns[data-mode='1'] [data-note='1'],
+  .fns[data-mode='2'] [data-note='2'],
+  .fns[data-mode='3'] [data-note='3'] {
+    display: inline;
+  }
+
+  .key {
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+  .k0 {
+    color: var(--c0);
+  }
+  .k1 {
+    color: var(--c1);
+  }
+  .k2 {
+    color: var(--c2);
+  }
+
+  .toggle {
+    display: inline-flex;
+    flex-wrap: wrap;
+    padding: 3px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    gap: 2px;
+  }
+
+  .toggle button {
+    font: inherit;
+    font-size: 0.8125rem;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .toggle button[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+</style>

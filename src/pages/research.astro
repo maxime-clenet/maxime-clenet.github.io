@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Glyph from '../components/Glyph.astro';
 import PubItem from '../components/PubItem.astro';
+import Functions from '../components/Functions.astro';
 import { themes } from '../data/research';
 import { articles, conference } from '../data/publications';
 
@@ -39,6 +40,7 @@ const find = (title: string) => all.find((p) => p.title === title);
             <p class="question">{t.question}</p>
             <p class="text">{t.text}</p>
             {t.project && <p class="project"><span class="eyebrow">Project</span> {t.project}</p>}
+            {t.id === 'functional-ecology' && <Functions />}
             {t.papers.some((title) => find(title)) && (
               <>
                 <h3 class="eyebrow related">Related work</h3>
