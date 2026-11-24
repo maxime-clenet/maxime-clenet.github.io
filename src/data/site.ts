@@ -37,7 +37,7 @@ export const path = [
   },
   {
     years: '2019 – 2022',
-    place: 'Université Gustave Eiffel & CNRS',
+    place: 'LIGM, CNRS & Université Gustave Eiffel',
     what: 'Ph.D. in mathematics, with François Massol and Jamal Najim',
   },
 ];

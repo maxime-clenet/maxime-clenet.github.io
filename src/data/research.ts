@@ -28,7 +28,7 @@ export const themes: Theme[] = [
     field: 'Community dynamics',
     question: 'How many species can coexist when they all interact, and which ones survive?',
     text: 'Ecological communities often contain many interacting species. Using large Lotka-Volterra systems and tools from random matrix theory, I study when species can coexist, how stable these communities are and how many species survive, and how the structure of interactions changes the answer.',
-    project: 'Ph.D., Université Gustave Eiffel & CNRS (2019 – 2022), with François Massol and Jamal Najim',
+    project: 'Ph.D., LIGM, CNRS & Université Gustave Eiffel (2019 – 2022), with François Massol and Jamal Najim',
     glyph: 'disk',
     papers: [
       'Complex systems in ecology: a guided tour with the large Lotka-Volterra model and random matrices',
