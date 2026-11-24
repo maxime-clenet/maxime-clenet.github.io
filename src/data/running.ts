@@ -23,7 +23,7 @@ export const efforts: Effort[] = [
     date: '2026-07-27',
     title: 'GR 340 – Tour de Belle-Île',
     place: 'Belle-Île-en-Mer, France',
-    stats: ['7 h 41 min 42 s', 'Unsupported'],
+    stats: ['77.41 km', '2,352 m D+', '7 h 41 min 42 s', 'Unsupported'],
     tag: 'FKT',
     links: [
       { label: 'FKT', href: 'https://fastestknowntime.com/fkt/maxime-clenet-gr-340-tour-de-belle-ile-france-2026-07-27' },
