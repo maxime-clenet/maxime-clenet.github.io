@@ -7,7 +7,7 @@ export const runner = {
 
 export type Effort = {
   year: number;
-  date?: string; // 'YYYY-MM-DD'
+  date?: string; // 'YYYY-MM-DD' or 'YYYY-MM'
   title: string;
   href?: string; // makes the title itself a link
   place?: string;
@@ -32,14 +32,18 @@ export const efforts: Effort[] = [
   },
   {
     year: 2025,
-    title: 'Activity on Strava',
-    href: 'https://www.strava.com/activities/21104028975',
-    links: [],
+    date: '2025-04',
+    title: 'Montreal Circumnavigation',
+    place: 'Montréal, QC, Canada',
+    stats: ['123.87 km', '9 h 52 min'],
+    links: [{ label: 'Strava', href: 'https://www.strava.com/activities/21104028975' }],
   },
   {
     year: 2024,
-    title: 'Activity on Strava',
-    href: 'https://www.strava.com/activities/21103976085',
-    links: [],
+    date: '2024-05',
+    title: 'Climbing Mont Blanc on Mont Royal',
+    place: 'Montréal, QC, Canada',
+    stats: ['57.72 km', '4,879 m D+', '9 h 42 min'],
+    links: [{ label: 'Strava', href: 'https://www.strava.com/activities/21103976085' }],
   },
 ];
