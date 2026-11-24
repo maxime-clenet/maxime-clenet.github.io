@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Glyph from '../components/Glyph.astro';
 import PubItem from '../components/PubItem.astro';
-import Functions from '../components/Functions.astro';
+import Eigen from '../components/Eigen.astro';
 import { themes } from '../data/research';
 import { articles, conference } from '../data/publications';
 
@@ -40,7 +40,11 @@ const find = (title: string) => all.find((p) => p.title === title);
             <p class="question">{t.question}</p>
             <p class="text">{t.text}</p>
             {t.project && <p class="project"><span class="eyebrow">Project</span> {t.project}</p>}
-            {t.id === 'functional-ecology' && <Functions />}
+            {t.id === 'large-communities' && (
+              <div class="theme-fig">
+                <Eigen />
+              </div>
+            )}
             {t.papers.some((title) => find(title)) && (
               <>
                 <h3 class="eyebrow related">Related work</h3>
@@ -141,6 +145,14 @@ const find = (title: string) => all.find((p) => p.title === title);
   .project .eyebrow {
     margin-right: 0.5rem;
     color: var(--accent-ink);
+  }
+
+  .theme-fig {
+    margin-top: 2rem;
+    padding: 1.25rem 1.25rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--paper-raised);
   }
 
   .related {

@@ -52,7 +52,7 @@ const pts = circ.map((c, i) => {
       <button type="button" data-mode="ell" aria-pressed="false">Correlated, ρ = 0.5</button>
     </div>
     <p>
-      <span class="eyebrow">Fig. 1</span> Eigenvalues of a random community matrix with 500 species. Independent
+      <span class="eyebrow">Fig.</span> Eigenvalues of a random community matrix with 500 species. Independent
       interactions fill a disk (the circular law); correlated pairs of interactions stretch it into an ellipse.
     </p>
   </figcaption>
@@ -66,7 +66,7 @@ const pts = circ.map((c, i) => {
       buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     };
     buttons.forEach((b) => b.addEventListener('click', () => select(b)));
-    // A link to /#correlated opens the figure in the correlated (elliptic) state.
+    // A link to #correlated opens the figure in the correlated (elliptic) state.
     if (location.hash === '#correlated') select(buttons[1]);
   });
 </script>

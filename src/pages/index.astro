@@ -1,7 +1,7 @@
 ---
 import { url } from '../utils/url';
 import Base from '../layouts/Base.astro';
-import Eigen from '../components/Eigen.astro';
+import Functions from '../components/Functions.astro';
 import Glyph from '../components/Glyph.astro';
 import PubItem from '../components/PubItem.astro';
 import { profile, links, statement, path } from '../data/site';
@@ -27,7 +27,7 @@ const selected = articles.filter((p) => p.selected);
       </ul>
     </div>
     <div class="hero-fig rise d4">
-      <Eigen />
+      <Functions />
     </div>
   </section>
 
