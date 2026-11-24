@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import { url } from '../../utils/url';
 
 export async function getStaticPaths() {
-  const reports = await getCollection('running', (r) => !r.data.draft);
+  const reports = await getCollection('endurance', (r) => !r.data.draft);
   return reports.map((r) => ({ params: { slug: r.id }, props: { report: r } }));
 }
 
@@ -19,7 +19,7 @@ const date = `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}
 <Base title={report.data.title} description={report.data.summary}>
   <article class="wrap post">
     <header class="page-head">
-      <p class="eyebrow"><a href={url('/running')}>Running</a> · {date}</p>
+      <p class="eyebrow"><a href={url('/endurance')}>Endurance</a> · {date}</p>
       <h1>{report.data.title}</h1>
       {report.data.summary && <p class="lead">{report.data.summary}</p>}
     </header>
@@ -31,7 +31,7 @@ const date = `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}
     <div class="prose body">
       <Content />
     </div>
-    <p class="back"><a href={url('/running')}>← All running</a></p>
+    <p class="back"><a href={url('/endurance')}>← All endurance</a></p>
   </article>
 </Base>
 

@@ -1,5 +1,5 @@
 ---
-# Copy this file, rename it (e.g. belle-ile-2026.md, the name becomes the URL),
+# Copy this file, rename it (e.g. belle-ile-2026.md, the name becomes the URL: /endurance/belle-ile-2026/),
 # fill in the fields and remove `draft: true` to publish it.
 # Files whose name starts with "_" are ignored.
 title: Title of the race report
