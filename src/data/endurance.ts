@@ -24,7 +24,7 @@ export const efforts: Effort[] = [
     year: 2026,
     sport: 'run',
     date: '2026-07-27',
-    title: 'GR 340 – Tour de Belle-Île',
+    title: 'GR 340 – Tour de Belle-Île-en-Mer',
     place: 'Belle-Île-en-Mer, France',
     stats: ['77 km', '2,352 m D+', '7 h 41 min', 'Unsupported'],
     tag: 'FKT',
