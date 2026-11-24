@@ -12,7 +12,7 @@ export type Effort = {
   title: string;
   href?: string; // makes the title itself a link
   place?: string;
-  stats?: string[]; // e.g. ['7 h 41 min 42 s', 'Unsupported']
+  stats?: string[]; // e.g. ['7 h 41 min', 'Unsupported']
   tag?: string; // short label, e.g. 'FKT'
   links: { label: string; href: string }[];
   report?: string; // slug of a race report in src/content/endurance/
@@ -25,7 +25,7 @@ export const efforts: Effort[] = [
     date: '2026-07-27',
     title: 'GR 340 – Tour de Belle-Île',
     place: 'Belle-Île-en-Mer, France',
-    stats: ['77.41 km', '2,352 m D+', '7 h 41 min 42 s', 'Unsupported'],
+    stats: ['77 km', '2,352 m D+', '7 h 41 min', 'Unsupported'],
     tag: 'FKT',
     links: [
       { label: 'FKT', href: 'https://fastestknowntime.com/fkt/maxime-clenet-gr-340-tour-de-belle-ile-france-2026-07-27' },
@@ -37,7 +37,7 @@ export const efforts: Effort[] = [
     sport: 'bike',
     title: 'Montpellier – Mont Aigoual and back',
     place: 'Hérault & Gard, France',
-    stats: ['218.79 km', '2,594 m D+', '7 h 27 min 24 s'],
+    stats: ['219 km', '2,594 m D+', '7 h 27 min'],
     links: [{ label: 'Strava', href: 'https://www.strava.com/activities/19851663951' }],
   },
   {
@@ -46,7 +46,7 @@ export const efforts: Effort[] = [
     date: '2025-04',
     title: 'Montreal Circumnavigation',
     place: 'Montréal, QC, Canada',
-    stats: ['123.87 km', '9 h 52 min'],
+    stats: ['124 km', '9 h 52 min'],
     links: [{ label: 'Strava', href: 'https://www.strava.com/activities/21104028975' }],
   },
   {
@@ -55,7 +55,7 @@ export const efforts: Effort[] = [
     date: '2024-05',
     title: 'Climbing Mont Blanc on Mont Royal',
     place: 'Montréal, QC, Canada',
-    stats: ['57.72 km', '4,879 m D+', '9 h 42 min'],
+    stats: ['58 km', '4,879 m D+', '9 h 42 min'],
     links: [{ label: 'Strava', href: 'https://www.strava.com/activities/21103976085' }],
   },
 ];
