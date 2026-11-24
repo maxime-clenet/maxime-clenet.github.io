@@ -1,0 +1,211 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { runner, efforts } from '../../data/running';
+import { url } from '../../utils/url';
+
+const years = [...new Set(efforts.map((e) => e.year))].sort((a, b) => b - a);
+const reports = (await getCollection('running', (r) => !r.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const month = (d?: string) => (d ? MONTHS[+d.slice(5, 7) - 1] : '');
+const fmt = (d: Date) => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+---
+
+<Base title="Running" description="Maxime Clenet's running: trail and long-distance efforts, and race reports.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Running</p>
+    <h1>On foot</h1>
+    <p class="lead prose">
+      Away from equations, I run long distances, mostly on trails. On Strava, I go by <em>{runner.handle}</em>.
+    </p>
+  </header>
+
+  <div class="wrap">
+    {
+      years.map((y) => (
+        <section class="year">
+          <h2 class="y">{y}</h2>
+          <ul>
+            {efforts
+              .filter((e) => e.year === y)
+              .map((e) => (
+                <li>
+                  <span class="eyebrow m">{month(e.date)}</span>
+                  <div class="body">
+                    <p class="t">
+                      {e.href ? (
+                        <a href={e.href} target="_blank" rel="noopener">
+                          {e.title} ↗
+                        </a>
+                      ) : (
+                        e.title
+                      )}
+                      {e.tag && <span class="tag">{e.tag}</span>}
+                    </p>
+                    {(e.place || e.stats) && (
+                      <p class="meta">{[e.place, ...(e.stats ?? [])].filter(Boolean).join(' · ')}</p>
+                    )}
+                  </div>
+                  <span class="links">
+                    {e.report && <a href={url(`/running/${e.report}`)}>Report</a>}
+                    {e.links.map((l) => (
+                      <a href={l.href} target="_blank" rel="noopener">
+                        {l.label} ↗
+                      </a>
+                    ))}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+
+  {
+    reports.length > 0 && (
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">Race reports</p>
+            <h2>Stories from the trail</h2>
+          </div>
+          <ul class="reports">
+            {reports.map((r) => (
+              <li>
+                <a href={url(`/running/${r.id}`)}>
+                  <span class="eyebrow">{fmt(r.data.date)}</span>
+                  <span class="rt">{r.data.title}</span>
+                  {r.data.summary && <span class="rs">{r.data.summary}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .lead em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .year {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    gap: 0 3rem;
+    border-top: 1px solid var(--rule);
+    padding-block: 2rem;
+  }
+
+  .y {
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--ink-soft);
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .year li {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+
+  .year li:last-child {
+    border-bottom: 0;
+  }
+
+  .body p {
+    margin: 0;
+  }
+
+  .t {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .meta {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 0.2rem !important;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--accent-ink);
+    background: var(--accent-wash);
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+    margin-left: 0.6rem;
+    vertical-align: 0.2em;
+  }
+
+  .links {
+    display: inline-flex;
+    gap: 0.9rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .reports {
+    border-top: 1px solid var(--rule);
+  }
+
+  .reports a {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+  }
+
+  .rt {
+    font-family: var(--serif);
+    font-size: 1.45rem;
+    line-height: 1.2;
+  }
+
+  .reports a:hover .rt {
+    color: var(--accent);
+  }
+
+  .rs {
+    color: var(--ink-soft);
+    max-width: 44rem;
+  }
+
+  @media (max-width: 760px) {
+    .year {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .y {
+      position: static;
+      margin-bottom: 0.5rem;
+    }
+    .year li {
+      grid-template-columns: 3rem minmax(0, 1fr);
+    }
+    .links {
+      grid-column: 2;
+    }
+  }
+</style>

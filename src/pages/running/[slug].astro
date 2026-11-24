@@ -1,0 +1,72 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const reports = await getCollection('running', (r) => !r.data.draft);
+  return reports.map((r) => ({ params: { slug: r.id }, props: { report: r } }));
+}
+
+const { report } = Astro.props;
+const { Content } = await render(report);
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const d = report.data.date;
+const date = `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+---
+
+<Base title={report.data.title} description={report.data.summary}>
+  <article class="wrap post">
+    <header class="page-head">
+      <p class="eyebrow"><a href={url('/running')}>Running</a> · {date}</p>
+      <h1>{report.data.title}</h1>
+      {report.data.summary && <p class="lead">{report.data.summary}</p>}
+    </header>
+    {
+      report.data.cover && (
+        <Image class="cover" src={report.data.cover} alt={report.data.coverAlt ?? ''} widths={[720, 1200, 1800]} sizes="(max-width: 900px) 100vw, 56rem" />
+      )
+    }
+    <div class="prose body">
+      <Content />
+    </div>
+    <p class="back"><a href={url('/running')}>← All running</a></p>
+  </article>
+</Base>
+
+<style>
+  .post {
+    max-width: 56rem;
+  }
+
+  .page-head .eyebrow a {
+    color: inherit;
+  }
+
+  .cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin-bottom: 2.5rem;
+  }
+
+  .body {
+    max-width: 40rem;
+    font-size: 1.075rem;
+  }
+
+  .body :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    margin: 2rem 0;
+  }
+
+  .back {
+    margin: 3rem 0 4rem;
+    font-size: 0.95rem;
+  }
+</style>
