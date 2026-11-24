@@ -3,6 +3,7 @@
 
 export const runner = {
   handle: 'Crêpe Secrète',
+  strava: 'https://www.strava.com/athletes/206398766',
 };
 
 export type Effort = {
