@@ -47,7 +47,11 @@ const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'n
     <header class="site-header">
       <div class="wrap bar">
         <a class="brand" href={url('/')} aria-label="Home">
-          <span class="brand-mark" aria-hidden="true"></span>
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <path class="bm-back" d="M1 27 10.5 13.5 17 22.5 13.5 27Z" />
+            <path class="bm-main" d="M7 27 19 6.5 31 27Z" />
+            <path class="bm-snow" d="M15.3 12.8 19 6.5l3.7 6.3-1.9-1.2-1.8 2.2-1.8-2.2Z" />
+          </svg>
           <span class="brand-name">{profile.name}</span>
         </a>
         <nav aria-label="Main">
@@ -127,11 +131,23 @@ const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'n
   }
 
   .brand-mark {
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: 50%;
-    border: 1.5px solid var(--accent);
-    background: radial-gradient(circle at 50% 50%, var(--accent) 0 28%, transparent 30%);
+    width: 1.7rem;
+    height: 1.7rem;
+    flex: none;
+    transform: translateY(-0.12rem);
+  }
+
+  .bm-main {
+    fill: var(--accent);
+  }
+
+  .bm-back {
+    fill: var(--accent);
+    opacity: 0.55;
+  }
+
+  .bm-snow {
+    fill: var(--paper);
   }
 
   .brand-name {
