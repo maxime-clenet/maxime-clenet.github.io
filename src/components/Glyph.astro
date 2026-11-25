@@ -27,10 +27,33 @@ const te = [
   [[2, 3], [0, 3], [1, 2], [0, 2]],
 ];
 
-// qubits: a network split into two detected communities
-const qa = [[28, 26], [44, 14], [52, 38], [30, 54], [16, 40]];
-const qb = [[110, 22], [130, 34], [118, 56], [100, 46], [140, 60]];
-const qe = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [0, 2]];
+// qubits: a superconducting quantum computer, the "chandelier" of a dilution refrigerator:
+// stacked plates that narrow downwards, joined by rods and coiled coaxial cables, with the chip at the bottom.
+const QX = 80;
+const plates = [
+  [8, 66],
+  [26, 54],
+  [42, 44],
+  [56, 34],
+  [67, 24],
+];
+const rods = plates.slice(0, -1).flatMap(([y, w], i) => {
+  const [y2, w2] = plates[i + 1];
+  return [-1, 1].map((s) => [QX + s * (w / 2 - 4), y + 1.5, QX + s * (w2 / 2 - 4), y2 - 1.5]);
+});
+const cables = [-0.5, -0.17, 0.17, 0.5].map((f) =>
+  plates
+    .slice(0, -1)
+    .map(([y, w], i) => {
+      const [y2, w2] = plates[i + 1];
+      const x1 = QX + f * (w - 22);
+      const x2 = QX + f * (w2 - 22);
+      const m = (y + y2) / 2;
+      const b = (i % 2 ? -1 : 1) * 3.5;
+      return `M${x1} ${y + 1.5} C${x1 + b} ${m - 2} ${x2 - b} ${m + 2} ${x2} ${y2 - 1.5}`;
+    })
+    .join(' '),
+);
 ---
 
 <svg class="glyph" viewBox="0 0 160 90" aria-hidden="true" focusable="false">
@@ -90,19 +113,20 @@ const qe = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [0, 2]];
   {
     kind === 'qubits' && (
       <g>
-        <line class="edge dashed" x1={qa[2][0]} y1={qa[2][1]} x2={qb[3][0]} y2={qb[3][1]} />
-        {qe.map(([a, b]) => (
-          <line class="edge strong" x1={qa[a][0]} y1={qa[a][1]} x2={qa[b][0]} y2={qa[b][1]} />
+        <line class="base" x1={QX - 24} y1="2" x2={QX - 24} y2="8" />
+        <line class="base" x1={QX + 24} y1="2" x2={QX + 24} y2="8" />
+        {rods.map(([x1, y1, x2, y2]) => (
+          <line class="rod" x1={x1} y1={y1} x2={x2} y2={y2} />
         ))}
-        {qe.map(([a, b]) => (
-          <line class="edge" x1={qb[a][0]} y1={qb[a][1]} x2={qb[b][0]} y2={qb[b][1]} />
+        {cables.map((d) => (
+          <path class="cable" d={d} />
         ))}
-        {qa.map(([x, y]) => (
-          <circle class="node" cx={x} cy={y} r="4" />
+        {plates.map(([y, w], i) => (
+          <rect class={i === 0 ? 'fill' : 'plate'} x={QX - w / 2} y={y - 1.6} width={w} height="3.2" rx="1.2" />
         ))}
-        {qb.map(([x, y]) => (
-          <circle class="hollow" cx={x} cy={y} r="4" />
-        ))}
+        <line class="rod" x1={QX} y1="68.6" x2={QX} y2="74" />
+        <rect class="chip" x={QX - 6} y="74" width="12" height="9" rx="1.5" />
+        <circle class="fill" cx={QX} cy="78.5" r="1.8" />
       </g>
     )
   }
@@ -158,5 +182,25 @@ const qe = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [0, 2]];
   .frame {
     fill: none;
     stroke: var(--rule);
+  }
+  .plate {
+    fill: var(--accent);
+    opacity: 0.75;
+  }
+  .rod {
+    stroke: var(--accent);
+    stroke-width: 1;
+    opacity: 0.55;
+  }
+  .cable {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 0.9;
+    opacity: 0.8;
+  }
+  .chip {
+    fill: var(--paper);
+    stroke: var(--accent);
+    stroke-width: 1.3;
   }
 </style>
