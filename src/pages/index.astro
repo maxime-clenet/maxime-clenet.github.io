@@ -22,7 +22,6 @@ const selected = articles.filter((p) => p.selected);
       </p>
       <ul class="pills rise d3">
         <li><a class="pill solid" href={url('/research')}>Research</a></li>
-        <li><a class="pill" href={url('/cv')}>CV</a></li>
         {links.map((l) => <li><a class="pill" href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener">{l.label}</a></li>)}
       </ul>
     </div>
