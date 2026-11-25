@@ -27,33 +27,25 @@ const te = [
   [[2, 3], [0, 3], [1, 2], [0, 2]],
 ];
 
-// qubits: a superconducting quantum computer, the "chandelier" of a dilution refrigerator:
-// stacked plates that narrow downwards, joined by rods and coiled coaxial cables, with the chip at the bottom.
+// qubits: a quantum chip — a processor with pins, an atom at its core, and circuit traces
+// ending in terminals.
 const QX = 80;
-const plates = [
-  [8, 66],
-  [26, 54],
-  [42, 44],
-  [56, 34],
-  [67, 24],
+const QY = 45;
+const pinOffs = [-12, -4, 4, 12];
+const pins = pinOffs.flatMap((o) => [
+  [QX + o, QY - 18, QX + o, QY - 24],
+  [QX + o, QY + 18, QX + o, QY + 24],
+  [QX - 18, QY + o, QX - 24, QY + o],
+  [QX + 18, QY + o, QX + 24, QY + o],
+]);
+const half = [
+  [[56, 33], [50, 33], [40, 23]],
+  [[56, 41], [30, 41]],
+  [[56, 57], [50, 57], [40, 67]],
+  [[68, 21], [68, 14], [60, 6]],
+  [[68, 69], [68, 76], [60, 84]],
 ];
-const rods = plates.slice(0, -1).flatMap(([y, w], i) => {
-  const [y2, w2] = plates[i + 1];
-  return [-1, 1].map((s) => [QX + s * (w / 2 - 4), y + 1.5, QX + s * (w2 / 2 - 4), y2 - 1.5]);
-});
-const cables = [-0.5, -0.17, 0.17, 0.5].map((f) =>
-  plates
-    .slice(0, -1)
-    .map(([y, w], i) => {
-      const [y2, w2] = plates[i + 1];
-      const x1 = QX + f * (w - 22);
-      const x2 = QX + f * (w2 - 22);
-      const m = (y + y2) / 2;
-      const b = (i % 2 ? -1 : 1) * 3.5;
-      return `M${x1} ${y + 1.5} C${x1 + b} ${m - 2} ${x2 - b} ${m + 2} ${x2} ${y2 - 1.5}`;
-    })
-    .join(' '),
-);
+const traces = [...half, ...half.map((t) => t.map(([x, y]) => [160 - x, y]))];
 ---
 
 <svg class="glyph" viewBox="0 0 160 90" aria-hidden="true" focusable="false">
@@ -113,20 +105,21 @@ const cables = [-0.5, -0.17, 0.17, 0.5].map((f) =>
   {
     kind === 'qubits' && (
       <g>
-        <line class="base" x1={QX - 24} y1="2" x2={QX - 24} y2="8" />
-        <line class="base" x1={QX + 24} y1="2" x2={QX + 24} y2="8" />
-        {rods.map(([x1, y1, x2, y2]) => (
-          <line class="rod" x1={x1} y1={y1} x2={x2} y2={y2} />
+        {traces.map((t) => (
+          <polyline class="trace" points={t.map((p) => p.join(',')).join(' ')} />
         ))}
-        {cables.map((d) => (
-          <path class="cable" d={d} />
+        {pins.map(([x1, y1, x2, y2]) => (
+          <line class="pin" x1={x1} y1={y1} x2={x2} y2={y2} />
         ))}
-        {plates.map(([y, w], i) => (
-          <rect class={i === 0 ? 'fill' : 'plate'} x={QX - w / 2} y={y - 1.6} width={w} height="3.2" rx="1.2" />
+        {traces.map((t) => (
+          <circle class="hollow" cx={t[t.length - 1][0]} cy={t[t.length - 1][1]} r="3.2" />
         ))}
-        <line class="rod" x1={QX} y1="68.6" x2={QX} y2="74" />
-        <rect class="chip" x={QX - 6} y="74" width="12" height="9" rx="1.5" />
-        <circle class="fill" cx={QX} cy="78.5" r="1.8" />
+        <rect class="chip" x={QX - 18} y={QY - 18} width="36" height="36" rx="4" />
+        <rect class="core" x={QX - 12} y={QY - 12} width="24" height="24" rx="2.5" />
+        {[0, 60, 120].map((a) => (
+          <ellipse class="orbit" cx={QX} cy={QY} rx="9.5" ry="3.6" transform={`rotate(${a} ${QX} ${QY})`} />
+        ))}
+        <circle class="fill" cx={QX} cy={QY} r="1.8" />
       </g>
     )
   }
@@ -183,24 +176,31 @@ const cables = [-0.5, -0.17, 0.17, 0.5].map((f) =>
     fill: none;
     stroke: var(--rule);
   }
-  .plate {
-    fill: var(--accent);
-    opacity: 0.75;
-  }
-  .rod {
-    stroke: var(--accent);
-    stroke-width: 1;
-    opacity: 0.55;
-  }
-  .cable {
+  .trace {
     fill: none;
     stroke: var(--accent);
-    stroke-width: 0.9;
-    opacity: 0.8;
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+    opacity: 0.7;
+  }
+  .pin {
+    stroke: var(--accent);
+    stroke-width: 1.4;
   }
   .chip {
     fill: var(--paper);
     stroke: var(--accent);
-    stroke-width: 1.3;
+    stroke-width: 1.6;
+  }
+  .core {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    opacity: 0.6;
+  }
+  .orbit {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.1;
   }
 </style>
