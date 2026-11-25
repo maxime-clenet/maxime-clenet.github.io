@@ -49,8 +49,8 @@ const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'n
         <a class="brand" href={url('/')} aria-label="Home">
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
             <path class="bm-back" d="M1 27 10.5 13.5 17 22.5 13.5 27Z" />
-            <path class="bm-main" d="M7 27 19 6.5 31 27Z" />
-            <path class="bm-snow" d="M15.3 12.8 19 6.5l3.7 6.3-1.9-1.2-1.8 2.2-1.8-2.2Z" />
+            <path class="bm-lit" d="M7 27 19 6.5 17.5 18 21 27Z" />
+            <path class="bm-shade" d="M19 6.5 31 27H21l-3.5-9Z" />
           </svg>
           <span class="brand-name">{profile.name}</span>
         </a>
@@ -137,8 +137,12 @@ const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'n
     transform: translateY(-0.12rem);
   }
 
-  .bm-main {
-    fill: var(--accent);
+  .bm-lit {
+    fill: color-mix(in srgb, var(--accent) 82%, var(--paper));
+  }
+
+  .bm-shade {
+    fill: var(--accent-ink);
   }
 
   .bm-back {
@@ -146,9 +150,6 @@ const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'n
     opacity: 0.55;
   }
 
-  .bm-snow {
-    fill: var(--paper);
-  }
 
   .brand-name {
     font-family: var(--serif);
