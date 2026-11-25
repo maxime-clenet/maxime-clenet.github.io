@@ -100,6 +100,15 @@ export const places: Place[] = [
 
   // World
   {
+    id: 'as',
+    city: 'Ås',
+    country: 'Norway',
+    lon: 10.77,
+    lat: 59.67,
+    label: 'right',
+    institutions: [{ name: 'Norwegian University of Life Sciences (NMBU)' }],
+  },
+  {
     id: 'sherbrooke',
     city: 'Sherbrooke',
     country: 'Québec, Canada',
