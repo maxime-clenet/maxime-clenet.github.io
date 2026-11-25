@@ -1,0 +1,343 @@
+---
+// Map of collaborations, rendered to static SVG at build time: a world panel and a France panel.
+// Land outlines: Natural Earth 1:50m (world-atlas). On the world panel, great-circle arcs link
+// the current position to each partner city; they are drawn when the map scrolls into view.
+import { geoNaturalEarth1, geoConicConformal, geoPath, geoInterpolate, type GeoProjection } from 'd3-geo';
+import { feature } from 'topojson-client';
+import land50 from 'world-atlas/land-50m.json';
+import { places, home, type Place } from '../data/collaborations';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const land = feature(land50 as any, (land50 as any).objects.land) as any;
+const origin = places.find((p) => p.id === home)!;
+
+const boxOf = (lon0: number, lat0: number, lon1: number, lat1: number) =>
+  ({
+    type: 'MultiPoint',
+    coordinates: [
+      [lon0, lat0],
+      [lon1, lat1],
+      [lon0, lat1],
+      [lon1, lat0],
+      [(lon0 + lon1) / 2, lat0],
+      [(lon0 + lon1) / 2, lat1],
+    ],
+  }) as any;
+
+const offs = {
+  right: { dx: 8, dy: 4, anchor: 'start' },
+  left: { dx: -8, dy: 4, anchor: 'end' },
+  above: { dx: 0, dy: -9, anchor: 'middle' },
+  below: { dx: 0, dy: 16, anchor: 'middle' },
+} as const;
+
+const radius = (p: Place) => 3 + Math.sqrt(p.institutions.length) * 1.6;
+
+function panel(projection: GeoProjection, W: number, H: number, pts: Place[], withArcs: boolean, frame?: number[]) {
+  projection.clipExtent([
+    [-1, -1],
+    [W + 1, H + 1],
+  ]);
+  const path = geoPath(projection).digits(1);
+  const dots = pts.map((p) => {
+    const [x, y] = projection([p.lon, p.lat])!;
+    const o = offs[p.label ?? 'right'];
+    return { ...p, x: +x.toFixed(1), y: +y.toFixed(1), r: radius(p), lx: +(x + o.dx).toFixed(1), ly: +(y + o.dy).toFixed(1), anchor: o.anchor };
+  });
+  const arcs = withArcs
+    ? pts
+        .filter((p) => p.id !== home)
+        .map((p, i) => {
+          const f = geoInterpolate([origin.lon, origin.lat], [p.lon, p.lat]);
+          const d = path({ type: 'LineString', coordinates: Array.from({ length: 64 }, (_, k) => f(k / 63)) }) ?? '';
+          return { d, delay: 100 + i * 90 };
+        })
+    : [];
+  let rect = null;
+  if (frame) {
+    const [a, b] = [projection([frame[0], frame[3]])!, projection([frame[2], frame[1]])!];
+    rect = { x: +a[0].toFixed(1), y: +a[1].toFixed(1), w: +(b[0] - a[0]).toFixed(1), h: +(b[1] - a[1]).toFixed(1) };
+  }
+  return { W, H, land: path(land) ?? '', dots, arcs, rect };
+}
+
+// France box: lon/lat extent of the France panel, also outlined on the world panel.
+const FR = [-2.2, 41.6, 8.6, 51.4];
+
+const worldPts = places.filter((p) => !p.france);
+const world = panel(
+  geoNaturalEarth1().fitExtent(
+    [
+      [10, 10],
+      [990, 470],
+    ],
+    boxOf(-135, -42, 160, 62),
+  ),
+  1000,
+  480,
+  [origin, ...worldPts],
+  true,
+  FR,
+);
+const france = panel(
+  geoConicConformal()
+    .parallels([44, 49])
+    .rotate([-3, 0])
+    .fitExtent(
+      [
+        [8, 30],
+        [392, 470],
+      ],
+      boxOf(FR[0], FR[1], FR[2], FR[3]),
+    ),
+  400,
+  480,
+  places.filter((p) => p.france),
+  false,
+);
+
+// The home city appears on both panels; on the world panel it is labelled "France".
+world.dots = world.dots.map((d) => (d.id === home ? { ...d, city: '', r: 3.5 } : d));
+
+const order = [home, ...places.filter((p) => p.france && p.id !== home).map((p) => p.id), ...worldPts.map((p) => p.id)];
+const legend = order.map((id) => places.find((p) => p.id === id)!);
+const nCities = places.length;
+const nCountries = new Set(places.map((p) => p.country.split(', ').pop())).size;
+---
+
+<figure class="cmap">
+  <div class="panels">
+    {
+      [world, france].map((pn, k) => (
+        <svg
+          class:list={['panel', k === 0 ? 'world' : 'fr']}
+          viewBox={`0 0 ${pn.W} ${pn.H}`}
+          role="img"
+          aria-label={k === 0 ? 'World map of collaborations' : 'Map of collaborations in France'}
+        >
+          <path class="land" d={pn.land} />
+          {pn.rect && <rect class="frbox" x={pn.rect.x} y={pn.rect.y} width={pn.rect.w} height={pn.rect.h} rx="3" />}
+          <g class="arcs">
+            {pn.arcs.map((a) => (
+              <path d={a.d} pathLength="1" style={`--d:${a.delay}ms`} />
+            ))}
+          </g>
+          <g>
+            {pn.dots.map((p) => (
+              <g class:list={['dot', { home: p.id === home }]}>
+                <circle class="halo" cx={p.x} cy={p.y} r={p.r + 3.5} />
+                <circle cx={p.x} cy={p.y} r={p.r} />
+                {p.city && (
+                  <text x={p.lx} y={p.ly} text-anchor={p.anchor}>
+                    {p.city}
+                  </text>
+                )}
+              </g>
+            ))}
+          </g>
+          {k === 1 && (
+            <text class="corner" x="12" y="24">
+              France
+            </text>
+          )}
+        </svg>
+      ))
+    }
+  </div>
+  <figcaption>
+    <p class="sum">{nCities} cities in {nCountries} countries.</p>
+    <ul class="legend">
+      {
+        legend.map((p) => (
+          <li>
+            <span class="city">
+              {p.city} <span class="country">{p.country}</span>
+            </span>
+            {p.role && <span class="role">{p.role}</span>}
+            {p.institutions.map((i) => (
+              <span class="inst">{i.name}</span>
+            ))}
+          </li>
+        ))
+      }
+    </ul>
+  </figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('figure.cmap').forEach((fig) => {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          fig.dataset.shown = '';
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(fig);
+  });
+</script>
+
+<style>
+  .cmap {
+    margin: 0;
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: minmax(0, 2.5fr) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  @media (max-width: 760px) {
+    .panels {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .panel.fr {
+      max-width: 24rem;
+    }
+  }
+
+  .panel {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+  }
+
+  .land {
+    fill: var(--rule);
+    stroke: var(--rule-strong);
+    stroke-width: 0.5;
+  }
+
+  .frbox {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    stroke-dasharray: 3 2.5;
+  }
+
+  .arcs path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.1;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0.6;
+    transition: stroke-dashoffset 1.6s cubic-bezier(0.65, 0, 0.35, 1);
+    transition-delay: var(--d);
+  }
+
+  .cmap[data-shown] .arcs path {
+    stroke-dashoffset: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arcs path {
+      transition: none;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (scripting: none) {
+    .arcs path {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .dot circle {
+    fill: var(--paper-raised);
+    stroke: var(--accent);
+    stroke-width: 1.5;
+  }
+
+  .dot.home circle:not(.halo) {
+    fill: var(--accent);
+  }
+
+  .dot .halo {
+    fill: var(--accent);
+    stroke: none;
+    opacity: 0.12;
+  }
+
+  .dot text,
+  .corner {
+    font-family: var(--mono);
+    font-size: 11px;
+    fill: var(--ink-soft);
+    paint-order: stroke;
+    stroke: var(--paper-raised);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+
+  .fr .dot text {
+    font-size: 13px;
+  }
+
+  .corner {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    fill: var(--accent);
+  }
+
+  .sum {
+    margin: 1.1rem 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .legend {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 1.1rem 2rem;
+  }
+
+  .legend li {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--rule-strong);
+  }
+
+  .city {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .country {
+    font-family: var(--sans, inherit);
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-left: 0.3rem;
+  }
+
+  .role {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .inst {
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+
+</style>

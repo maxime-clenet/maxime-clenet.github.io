@@ -2,6 +2,7 @@
 import { url } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import { path } from '../data/site';
+import CollabMap from '../components/CollabMap.astro';
 ---
 
 <Base title="CV" description="Curriculum vitae of Maxime Clenet.">
@@ -26,6 +27,13 @@ import { path } from '../data/site';
         ))
       }
     </ol>
+    <section class="collab">
+      <div class="section-head">
+        <p class="eyebrow">Collaborations</p>
+        <h2>Working with</h2>
+      </div>
+      <CollabMap />
+    </section>
     <div class="frame">
       <object data={url('/Clenet_CV.pdf')} type="application/pdf" title="CV of Maxime Clenet">
         <p>Your browser cannot display the PDF. <a href={url('/Clenet_CV.pdf')}>Download it here</a>.</p>
@@ -60,6 +68,10 @@ import { path } from '../data/site';
   .what {
     font-size: 0.875rem;
     color: var(--muted);
+  }
+
+  .collab {
+    margin-bottom: 3.5rem;
   }
 
   .frame {
