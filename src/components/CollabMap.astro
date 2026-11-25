@@ -31,7 +31,7 @@ const offs = {
   below: { dx: 0, dy: 16, anchor: 'middle' },
 } as const;
 
-const radius = (p: Place) => 3 + Math.sqrt(p.institutions.length) * 1.6;
+const radius = (p: Place) => 3 + Math.sqrt(Math.max(1, p.institutions.length)) * 1.6;
 
 function panel(projection: GeoProjection, W: number, H: number, pts: Place[], withArcs: boolean, frame?: number[]) {
   projection.clipExtent([
